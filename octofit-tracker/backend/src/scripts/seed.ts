@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { connectToDatabase, disconnectFromDatabase } from '../config/database.js';
 import User from '../models/User.js';
 import Team from '../models/Team.js';
 import Activity from '../models/Activity.js';
@@ -11,8 +12,6 @@ import Workout from '../models/Workout.js';
  * This script clears existing collections and populates them with realistic
  * sample data for users, teams, activities, leaderboard rankings, and workouts.
  */
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
 
 // Sample data
 const sampleUsers = [
@@ -89,8 +88,7 @@ const sampleWorkouts = [
 
 async function seed() {
   try {
-    await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
+    await connectToDatabase();
 
     // Clear existing data
     console.log('Clearing existing data...');
@@ -236,7 +234,7 @@ async function seed() {
     console.log(`✓ Leaderboard entries: ${leaderboard.length}`);
     console.log(`✓ Workouts: ${workouts.length}`);
 
-    await mongoose.connection.close();
+    await disconnectFromDatabase();
   } catch (error) {
     console.error('Error seeding database:', error);
     process.exit(1);
